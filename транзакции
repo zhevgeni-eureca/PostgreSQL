@@ -1,0 +1,47 @@
+### Работа с уровнями изоляции транзакции в PostgreSQL
+
+1. Установка PostgreSQL:
+`sudo apt install postgresql`
+
+2. Открываем второе ssh соединение.
+3. Запускаем везде psql под пользователем postgres:
+`sudo -u postgres psql`
+4. Отключаем auto commit:
+`\set AUTOCOMMIT OFF`
+5. Создаём в первой сессии таблицу и наполняем её данными:
+```create table persons(id serial, first_name text, second_name text);
+insert into persons(first_name, second_name) values('ivan', 'ivanov');
+insert into persons(first_name, second_name) values('petr', 'petrov');
+commit;```
+6. Смотрим текущий уровень изоляции транзакций:
+`show transaction isolation level;`
+Текущий уровень read commited.
+7. Начинаем новую транзакцию в обеих сессиях:
+`BEGIN;`
+8. В первой сессии добавим новую запись:
+`insert into persons(first_name, second_name) values('sergey', 'sergeev');`
+9. Во второй сессии выполняем:
+`select * from persons;`
+Новая запись отсутствует, поскольку ранее был отключен auto commit, а текущий урвоень изоляции транзакций не позволяет обращаться к данным, которые не были зафиксированы.
+10. В первой сессии закрываем транзакцию:
+`COMMIT';`
+11. Во второй сесссии выполняем:
+`select * from persons;`
+Новую запись видно во второй сессии, поскольку новые данные были зафиксированы при закрытии транзакции в первой сессии.
+12. Переключаем уровень изоляции транзакций на repeatable read
+`set transaction isolation level repeatable read;`
+13. В первой сессии добавляем новую запись:
+`insert into persons(first_name, second_name) values('sveta', 'svetova');`
+14. Во второй сессии выполняем:
+`select * from persons;`
+Новую запись не видно, поскольку данные не зафиксированы.
+15. Завершаем первую транзакцию:
+`COMMIT;`
+16. Делаем во второй сессии:
+`select * from persons;`
+Новую запись невидно, поскольку в PostgreSQL запрещены фантомные чтения.
+17. Завершаем вторую сессию:
+`COMMIT;` 
+18. Делаем во второй сессии:
+`select * from persons;`
+Новую запись теперь видно, поскольку открыта новая транзакция, на момент открытия которой новые данные уже были записаны, соотвественно фантомного чтения не происходит.
