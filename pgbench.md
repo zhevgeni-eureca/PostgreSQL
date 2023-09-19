@@ -1,4 +1,4 @@
-### Настрйока PostgreSQL
+### Анализ производительности PostgreSQL
 
 1. Исходные настройки postgresql.conf:
 ```
