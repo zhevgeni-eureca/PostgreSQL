@@ -11,7 +11,7 @@
 * 2 vCPU
 * 2 Gb RAM
 * Логин user
-* ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPqiV+uz0iMrgK6sbi0EYqu5r9YJ+CMNG8qwWeg53zrR 
+* ssh-ed25519 *z0iMrgK6sbi0EYqu5r9YJ+CMNG8qwWeg53zrR 
 
 2. Подключимся по ssh:
 ```
